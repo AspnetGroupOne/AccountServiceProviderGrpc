@@ -16,7 +16,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(x =>
 
 var app = builder.Build();
 
-app.MapGrpcService<AccountService>();
+app.UseGrpcWeb();
+app.MapGrpcService<AccountService>().EnableGrpcWeb();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
 app.Run();
