@@ -101,7 +101,6 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         return response;
     }
 
-
     public override async Task<GetAccountByIdResponse> GetAccountById(GetAccountByIdRequest request, ServerCallContext context)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
@@ -217,7 +216,6 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
                 : string.Join(", ", result.Errors.Select(e => e.Description)),
         };
     }
-
 
     public override async Task<ConfirmEmailChangeResponse> ConfirmEmailChange(ConfirmEmailChangeRequest request, ServerCallContext context)
     {

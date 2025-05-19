@@ -21,7 +21,3 @@ app.MapGrpcService<AccountService>().EnableGrpcWeb();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
 app.Run();
-
-
-
-//Don't forget to use HTTP 2.0 in azure configuration
