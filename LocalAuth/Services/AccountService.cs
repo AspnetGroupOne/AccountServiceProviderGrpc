@@ -28,8 +28,7 @@ public class AccountService(UserManager<IdentityUser> userManager)
         };
 
         if (result.Succeeded)
-            response.UserId = user.NormalizedEmail;
-            response.Email = user.Email;
+            response.UserId = user.Id;
 
         return response;
     }
