@@ -69,7 +69,7 @@ public class AccountService(UserManager<IdentityUser> userManager)
         {
             Success = true,
             Message = "Login Successful",
-            UserId = user.Id
+            UserId = user.Email
         };
 
 
