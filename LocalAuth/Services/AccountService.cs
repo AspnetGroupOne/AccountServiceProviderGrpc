@@ -1,14 +1,15 @@
 ﻿using Grpc.Core;
+using IdentityGrpc.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityGrpc.Services;
 
-public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpcService.AccountGrpcServiceBase
+public class AccountService(UserManager<IdentityUser> userManager)
 {
     private readonly UserManager<IdentityUser> _userManager = userManager;
 
-    public override async Task<CreateAccountResponse> CreateAccount(CreateAccountRequest request, ServerCallContext context)
+    public async Task<CreateAccountResponseModel> CreateAccount(CreateAccountRequestModel request)
     {
         var user = new IdentityUser
         {
@@ -16,9 +17,9 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
             Email = request.Email
         };
 
-        var result = await _userManager.CreateAsync(user, request.Password);
+        var result = await _userManager.CreateAsync(user, request.Password!);
 
-        var response = new CreateAccountResponse
+        var response = new CreateAccountResponseModel
         {
             Success = result.Succeeded,
             Message = result.Succeeded 
@@ -32,11 +33,11 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         return response;
     }
 
-    public override async Task<ValidateCredentialsResponse> ValidateCredentials(ValidateCredentialsRequest request, ServerCallContext context)
+    public async Task<ValidateCredentialsResponseModel> ValidateCredentials(ValidateCredentialsRequestModel request)
     {
         if (string.IsNullOrEmpty(request.Email) || string.IsNullOrWhiteSpace(request.Password))
         {
-            return new ValidateCredentialsResponse 
+            return new ValidateCredentialsResponseModel 
             { 
                 Success = false,
                 Message =  "Email and password must be provided"
@@ -47,7 +48,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
 
         if (user == null) 
         {
-            return new ValidateCredentialsResponse
+            return new ValidateCredentialsResponseModel
             {
                 Success = false,
                 Message = "Invalid Credentials"
@@ -57,14 +58,14 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         var isValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isValid) 
         {
-            return new ValidateCredentialsResponse
+            return new ValidateCredentialsResponseModel
             {
                 Success = false,
                 Message = "Invalid Credentials"
             };
         }
 
-        return new ValidateCredentialsResponse
+        return new ValidateCredentialsResponseModel
         {
             Success = true,
             Message = "Login Successful",
@@ -75,7 +76,16 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
 
     }
 
-    public override async Task<GetAccountsResponse> GetAccounts(GetAccountsRequest request, ServerCallContext context)
+
+
+
+
+
+
+
+
+
+    public async Task<GetAccountsResponse> GetAccounts(GetAccountsRequest request)
     {
         var users = await _userManager.Users.ToListAsync();
 
@@ -101,7 +111,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         return response;
     }
 
-    public override async Task<GetAccountByIdResponse> GetAccountById(GetAccountByIdRequest request, ServerCallContext context)
+    public async Task<GetAccountByIdResponse> GetAccountById(GetAccountByIdRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -131,7 +141,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
 
     }
 
-    public override async Task<UpdatePhoneNumberResponse> UpdatePhoneNumber(UpdatePhoneNumberRequest request, ServerCallContext context)
+    public async Task<UpdatePhoneNumberResponse> UpdatePhoneNumber(UpdatePhoneNumberRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -160,7 +170,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<DeleteAccountByIdResponse> DeleteAccountById(DeleteAccountByIdRequest request, ServerCallContext context)
+    public async Task<DeleteAccountByIdResponse> DeleteAccountById(DeleteAccountByIdRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -184,7 +194,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         }; 
     }
 
-    public override async Task<ConfirmAccountResponse> ConfirmAccount(ConfirmAccountRequest request, ServerCallContext context)
+    public async Task<ConfirmAccountResponse> ConfirmAccount(ConfirmAccountRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -217,7 +227,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<ConfirmEmailChangeResponse> ConfirmEmailChange(ConfirmEmailChangeRequest request, ServerCallContext context)
+    public async Task<ConfirmEmailChangeResponse> ConfirmEmailChange(ConfirmEmailChangeRequest request)
     {
         var users = await _userManager.FindByEmailAsync(request.UserId);
 
@@ -241,7 +251,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<UpdateEmailResponse> UpdateEmail(UpdateEmailRequest request, ServerCallContext context)
+    public async Task<UpdateEmailResponse> UpdateEmail(UpdateEmailRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -274,7 +284,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<ResetPasswordResponse> ResetPassword(ResetPasswordRequest request, ServerCallContext context)
+    public async Task<ResetPasswordResponse> ResetPassword(ResetPasswordRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -297,7 +307,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<GenerateTokenResponse> GeneratePasswordResetToken(GenerateTokenRequest request, ServerCallContext context)
+    public async Task<GenerateTokenResponse> GeneratePasswordResetToken(GenerateTokenRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
@@ -322,7 +332,7 @@ public class AccountService(UserManager<IdentityUser> userManager) : AccountGrpc
         };
     }
 
-    public override async Task<GenerateTokenResponse> GenerateEmailConfirmationToken(GenerateTokenRequest request, ServerCallContext context)
+    public async Task<GenerateTokenResponse> GenerateEmailConfirmationToken(GenerateTokenRequest request)
     {
         var user = await _userManager.FindByIdAsync(request.UserId);
 
